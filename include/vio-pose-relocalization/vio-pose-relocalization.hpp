@@ -41,7 +41,7 @@ public:
         se3_src_ = s_se3;
         se3_tar_ = t_se3;
         num_step_ = num_step;
-        count_ = 0;
+        count_ = 1;
       }
       SE3 GetSlerpPose() {
         float alpha = float(count_) / num_step_;
@@ -74,7 +74,7 @@ public:
       return instance;
     }
 
-    void InitParameters(double max_allowed_timestamp_s,AlignFreedom aligned_dof,int slide_window_size = 3,int interp_steps = 30) {
+    void InitParameters(double max_allowed_timestamp_s,AlignFreedom aligned_dof,int slide_window_size = 3,int interp_steps = 3) {
       max_allowed_timestamp_s_ = max_allowed_timestamp_s;
       aligned_dof_ = aligned_dof;
       slide_window_size_ = slide_window_size;
@@ -86,7 +86,7 @@ public:
     }
 
     void UpdateRelocalizePose(double timestamp_s,const SE3& reloc_Twc,
-                              RelocalizeStatus status) {
+                              RelocalizeStatus status = RelocalizeStatus::OK) {
       if (MatchedVioPose(timestamp_s)) {
         SE3 err_Tww = CalculateReloPoseErr(timestamp_s,reloc_Twc);
         err_Tww_.push_back(err_Tww);
@@ -214,7 +214,7 @@ public:
     }
 
 private:
-    VioPoseRelocalization(double max_allowed_timestamp_s = 10.,AlignFreedom aligned_dof = DOF4,int slide_window_size = 3,int interp_steps = 30)
+    VioPoseRelocalization(double max_allowed_timestamp_s = 10.,AlignFreedom aligned_dof = DOF4,int slide_window_size = 3,int interp_steps = 3)
             : max_allowed_timestamp_s_(max_allowed_timestamp_s),
               aligned_dof_(aligned_dof),
               slide_window_size_(slide_window_size),
